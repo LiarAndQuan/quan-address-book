@@ -4,7 +4,9 @@ package online.aquan.controller;
 import lombok.RequiredArgsConstructor;
 import online.aquan.convention.Result;
 import online.aquan.convention.Results;
+import online.aquan.dao.entity.ProfessionDO;
 import online.aquan.dao.entity.UserDO;
+import online.aquan.service.ProfessionService;
 import online.aquan.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ProfessionService professionService;
 
     @PostMapping("user/register")
     public Result<Void> register(@RequestBody UserDO user) {
@@ -23,9 +26,8 @@ public class UserController {
     }
 
     @PostMapping("user/login")
-    public Result<Void> login(@RequestBody UserDO user) {
-        userService.login(user);
-        return Results.success();
+    public Result<UserDO> login(@RequestBody UserDO user) {
+        return Results.success(userService.login(user));
     }
 
     @PostMapping("user/logout")
@@ -40,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping("user/list")
-    public Result<List<UserDO>> findAll(UserDO userDO) {
+    public Result<List<UserDO>> findAll(@RequestBody UserDO userDO) {
         return Results.success(userService.findAll(userDO));
     }
 
@@ -50,21 +52,38 @@ public class UserController {
     }
     
     @PostMapping("admin/pass")
-    public Result<Void> pass(@RequestBody List<String> names) {
-        userService.pass(names);
+    public Result<Void> pass(@RequestParam List<String> usernames) {
+        userService.pass(usernames);
         return Results.success();
     }
     
     @PostMapping("admin/delete")
-    public Result<Void> delete(@RequestBody List<String> names) {
-        userService.delete(names);
+    public Result<Void> delete(@RequestParam List<String> usernames) {
+        userService.delete(usernames);
         return Results.success();
     }
     
     @PostMapping("admin/ban")
-    public Result<Void> ban(@RequestBody List<String> names) {
-        userService.ban(names);
+    public Result<Void> ban(@RequestParam List<String> usernames) {
+        userService.ban(usernames);
         return Results.success();
+    }
+    
+    @PostMapping("admin/addProfession")
+    public Result<Void> saveProfession(@RequestParam String profession){
+        professionService.save(profession);
+        return Results.success();
+    }
+    
+    @PostMapping("admin/deleteProfession")
+    public Result<Void> deleteProfession(@RequestParam List<String> pids){
+        professionService.delete(pids);
+        return Results.success();
+    }
+    
+    @GetMapping("user/getAllProfession")
+    public Result<List<ProfessionDO>> getAllProfession(){
+        return Results.success(professionService.getAll());
     }
     
 }

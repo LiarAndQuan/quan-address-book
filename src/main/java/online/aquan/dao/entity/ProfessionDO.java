@@ -1,6 +1,8 @@
 package online.aquan.dao.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName("profession")
 public class ProfessionDO {
-    Long id;
+    
+    @TableId
+    Long pid;
     String profession;
 }

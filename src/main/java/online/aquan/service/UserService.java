@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService extends IService<UserDO> {
     void register(UserDO user);
 
-    void login(UserDO user);
+    UserDO login(UserDO user);
 
     void update(UserDO user);
 

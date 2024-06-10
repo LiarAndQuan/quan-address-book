@@ -29,7 +29,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void register(UserDO user) {
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getName, user.getName());
+                .eq(UserDO::getUserName, user.getUserName());
         UserDO userDO = userMapper.selectOne(wrapper);
         if (userDO != null) {
             throw new ClientException("用户名已存在");
@@ -38,9 +38,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     }
 
     @Override
-    public void login(UserDO user) {
+    public UserDO login(UserDO user) {
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getName, user.getName())
+                .eq(UserDO::getUserName, user.getUserName())
                 .eq(UserDO::getPassword, user.getPassword());
         UserDO userDO = userMapper.selectOne(wrapper);
         if (userDO == null) {
@@ -48,9 +48,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         } else if (userDO.getApprovalStatus() == 0) {
             throw new ClientException("账号未审核通过,请联系管理员认证");
         }
-        userDO.setLastLogin(new Date());
-        userDO.setLoginTimes(userDO.getLoginTimes() + 1);
-        userMapper.insert(userDO);
+        LambdaUpdateWrapper<UserDO> updateWrapper = Wrappers.lambdaUpdate(UserDO.class)
+                .set(UserDO::getLastLogin, new Date())
+                .set(UserDO::getLoginTimes, userDO.getLoginTimes() + 1)
+                .eq(UserDO::getUserName, user.getUserName());
+        update(updateWrapper);
+        return userDO;
     }
 
     @Override
@@ -75,27 +78,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     }
 
     @Override
-    public void pass(List<String> names) {
+    public void pass(List<String> usernames) {
         LambdaUpdateWrapper<UserDO> wrapper = Wrappers.lambdaUpdate(UserDO.class)
                 .set(UserDO::getApprovalStatus, 1)
-                .in(UserDO::getName, names);
+                .in(UserDO::getUserName, usernames);
         update(wrapper);
     }
 
     @Override
-    public void delete(List<String> names) {
+    public void delete(List<String> usernames) {
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getApprovalStatus,0)
-                .in(UserDO::getName, names);
+                .in(UserDO::getUserName, usernames);
         remove(wrapper);
     }
 
     @Override
-    public void ban(List<String> names) {
+    public void ban(List<String> usernames) {
         LambdaUpdateWrapper<UserDO> wrapper = Wrappers.lambdaUpdate(UserDO.class)
                 .set(UserDO::getApprovalStatus,0)
                 .eq(UserDO::getApprovalStatus,1)
-                .in(UserDO::getName, names);
+                .in(UserDO::getUserName, usernames);
         update(wrapper);
     }
 }
