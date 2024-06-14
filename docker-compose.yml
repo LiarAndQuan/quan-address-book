@@ -1,0 +1,15 @@
+services:
+  address-book:
+    image: address-book
+    build:
+      context: .
+    networks:
+      - blog
+    ports:
+      - 30000:30000
+    container_name: address-book
+
+networks:
+  blog:
+    external: true
+

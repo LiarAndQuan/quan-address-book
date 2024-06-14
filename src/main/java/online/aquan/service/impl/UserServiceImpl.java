@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import online.aquan.convention.Result;
 import online.aquan.convention.Results;
 import online.aquan.convention.exception.ClientException;
+import online.aquan.dao.entity.ProfessionDO;
 import online.aquan.dao.entity.UserDO;
+import online.aquan.dao.mapper.ProfessionMapper;
 import online.aquan.dao.mapper.UserMapper;
 import online.aquan.service.UserService;
 import org.apache.catalina.User;
@@ -25,6 +27,7 @@ import java.util.List;
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
 
     private final UserMapper userMapper;
+    private final ProfessionMapper professionMapper;
 
     @Override
     public void register(UserDO user) {
@@ -57,6 +60,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     }
 
     @Override
+    public UserDO getUserById(long id) {
+        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
+                .eq(UserDO::getId, id);
+        UserDO userDO = userMapper.selectOne(wrapper);
+        return userDO;
+    }
+
+    @Override
     public void update(UserDO user) {
         userMapper.updateById(user);
     }
@@ -78,6 +89,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     }
 
     @Override
+    public List<UserDO> findAllPassed() {
+        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
+                .eq(UserDO::getApprovalStatus, 1);
+        return userMapper.selectList(wrapper);
+    }
+
+    @Override
     public void pass(List<String> usernames) {
         LambdaUpdateWrapper<UserDO> wrapper = Wrappers.lambdaUpdate(UserDO.class)
                 .set(UserDO::getApprovalStatus, 1)
@@ -88,7 +106,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void delete(List<String> usernames) {
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getApprovalStatus,0)
+                .eq(UserDO::getApprovalStatus, 0)
                 .in(UserDO::getUserName, usernames);
         remove(wrapper);
     }
@@ -96,8 +114,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void ban(List<String> usernames) {
         LambdaUpdateWrapper<UserDO> wrapper = Wrappers.lambdaUpdate(UserDO.class)
-                .set(UserDO::getApprovalStatus,0)
-                .eq(UserDO::getApprovalStatus,1)
+                .set(UserDO::getApprovalStatus, 0)
+                .eq(UserDO::getApprovalStatus, 1)
                 .in(UserDO::getUserName, usernames);
         update(wrapper);
     }

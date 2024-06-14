@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/addressbook
+    username: addressbook
+    password: ymEr3Y6QskkmCKza

@@ -22,4 +22,8 @@ public interface UserService extends IService<UserDO> {
     void delete(List<String> names);
 
     void ban(List<String> names);
+
+    List<UserDO> findAllPassed();
+
+    UserDO getUserById(long id);
 }

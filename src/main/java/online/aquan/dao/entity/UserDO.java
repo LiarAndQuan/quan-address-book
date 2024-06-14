@@ -1,5 +1,6 @@
 package online.aquan.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,13 +14,15 @@ import java.util.Date;
 @AllArgsConstructor
 @TableName("user")
 public class UserDO {
-    private Long id;
+    private Integer id;
     private String userName;
     private String password;
     private Integer approvalStatus;
     private String name;
     private Date birth;
     private Long pid;
+    @TableField(exist = false)
+    private String professionName;
     private String className;
     private Date entranceTime;
     private Date leaveTime;

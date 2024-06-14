@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 30000
 
     
 spring:
@@ -16,3 +16,6 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      id-type: auto
